@@ -35,9 +35,9 @@ pipeline {
             }
         }
     }
-        // stage('File System Scan') {
-        //     steps {
-        //         sh 'trivy fs --format table --output trivy-fs-report.html .'
-        //     }
-        // }
+        stage('File System Scan') {
+            steps {
+                sh 'trivy fs --format table --output trivy-fs-report.html .'
+            }
+        }
     }
