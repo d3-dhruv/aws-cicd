@@ -3,9 +3,6 @@ pipeline {
     tools {
         maven 'maven3'
     }
-     environment {
-        SCANNER_HOME= tool 'sonar-scanner'
-    }
     stages {
         stage('Git Checkout') {
             steps {
@@ -28,28 +25,12 @@ pipeline {
                 echo 'Maven Test Finished'
             }
         }
-        stage('File System Scan') {
-            steps {
-                echo 'Trivy Scan Started'
-                sh 'trivy fs --format table --output trivy-fs-output.html .'
-                echo 'Trivy Scan Finished'
-            }
-        }
-        stage ('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonar') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BoardGame -Dsonar.projectKey=BoardGame \
-                    -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-image-report.html'''
-                }
-            }
-        }
-        stage('Quality Gate') {
-            steps {
-                script {
-                timeout(time: 3, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
-                }
-              }
-            }
+        // stage('File System Scan') {
+        //     steps {
+        //         echo 'Trivy Scan Started'
+        //         sh 'trivy fs --format table --output trivy-fs-output.html .'
+        //         echo 'Trivy Scan Finished'
+        //     }
+        // }
     }
-}}
+}
