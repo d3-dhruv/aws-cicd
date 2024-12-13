@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'master' , credentialsId: 'git-creds' , url: 'https://github.com/d3-dhruv/aws-cicd.git'
+                git branch: 'master' , credentialsId: 'git-cred' , url: 'https://github.com/d3-dhruv/aws-cicd.git'
 
             }
         }
