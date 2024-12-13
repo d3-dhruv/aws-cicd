@@ -3,6 +3,9 @@ pipeline {
     tools {
         maven 'maven3'
     }
+     environment {
+        SCANNER_HOME= tool 'sonar-scanner'
+    }
     stages {
         stage('Git Checkout') {
             steps {
@@ -32,5 +35,21 @@ pipeline {
                 echo 'Trivy Scan Finished'
             }
         }
+        stage ('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BoardGame -Dsonar.projectKey=BoardGame \
+                    -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-image-report.html'''
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                script {
+                timeout(time: 3, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
+                }
+              }
+            }
     }
 }
