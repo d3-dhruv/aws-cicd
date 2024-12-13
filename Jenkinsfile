@@ -1,43 +1,36 @@
 pipeline {
     agent any
     tools {
-        jdk 'jdk17'
         maven 'maven3'
     }
-    
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'master', credentialsId: 'git-creds', url: 'https://github.com/d3-dhruv/aws-cicd.git'
+                git branch: 'master' , credentialsId: 'git-creds' , url: 'https://github.com/d3-dhruv/aws-cicd.git'
+
             }
         }
-        stage('Versioning') {
-    steps {
-        script {
-            sh 'mvn versions:set -DnewVersion=1.0.${BUILD_NUMBER}'
+
+        stage('Maven Compile') {
+            steps {
+                echo 'Maven COmpile Started'
+                sh 'mvn compile'
+                echo 'Maven COmpile Finished'
+            }
+        }
+        stage('Maven Test') {
+            steps {
+                echo 'Maven Test Started'
+                sh 'mvn test'
+                echo 'Maven Test Finished'
+            }
+        }
+        stage('File System Scan') {
+            steps {
+                echo 'Trivy Scan Started'
+                sh 'trivy fs --format table --output trivy-fs-output.html .'
+                echo 'Trivy Scan Finished'
+            }
         }
     }
 }
-        stage('Compile') {
-            steps {
-                sh 'mvn compile'
-                echo 'GITHUB Webhook Configured'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh "mvn test"
-            }
-        }
-        stage('Build') {
-            steps {
-                sh "mvn package"
-            }
-        }
-    }
-        stage('File System Scan') {
-            steps {
-                sh 'trivy fs --format table --output trivy-fs-report.html .'
-            }
-        }
-    }
