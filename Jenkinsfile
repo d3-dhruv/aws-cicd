@@ -27,6 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'mvn test'
+                echo "testing"
             }
         }
         // stage('File System Scan') {
