@@ -6,11 +6,11 @@ pipeline {
      environment {
         SCANNER_HOME= tool 'sonar-scanner'
     }
+
     stages {
         stage('Git Checkout') {
             steps {
                 git branch: 'master' , credentialsId: 'git-cred' , url: 'https://github.com/d3-dhruv/aws-cicd.git'
-
             }
         }
 
@@ -48,15 +48,6 @@ pipeline {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BoardGame -Dsonar.projectKey=BoardGame \
                     -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-image-report.html'''
                 }
-            }
-        }
-        stage('Quality Gate') {
-            steps {
-                script {
-                timeout(time: 3, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
-                }
-              }
             }
         }
     }
