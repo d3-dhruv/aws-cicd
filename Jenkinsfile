@@ -26,14 +26,18 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'mvn test'
-                echo "testing"
+                sh "mvn test"
             }
         }
+        stage('Build') {
+            steps {
+                sh "mvn package"
+            }
+        }
+    }
         // stage('File System Scan') {
         //     steps {
         //         sh 'trivy fs --format table --output trivy-fs-report.html .'
         //     }
         // }
     }
-}
