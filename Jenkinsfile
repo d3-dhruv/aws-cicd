@@ -34,14 +34,13 @@ pipeline {
                 echo 'Trivy Scan Finished'
             }
         }
-       stage('SonarQube Analysis') {
-    def mvn = tool 'Default Maven';
-    withSonarQubeEnv() {
-      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=sonar-scanner"
+        stage ('SonarQube Analysis test') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=sonar-scanner -Dsonar.projectKey=sonar-scanner \
+                    -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-image-report.html'''
+                }
+            }
+        }
     }
-  }
-}
-
-                
-          
 }
